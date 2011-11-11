@@ -1,0 +1,17 @@
+{
+   "background_page": "background.html",
+   "browser_action": {
+      "default_icon": "email48.png",
+      "default_title": "그누보드 쪽지",
+      "popup": "popup.html"
+   },
+   "description": "그누보드4의 새쪽지 확인 및 알림 기능",
+   "icons": {
+      "48" : "email48.png",
+      "128": "email128.png"
+   },	// downloaded from http://www.softicons.com/free-icons/system-icons/senary-system-icons-by-arrioch/email-icon
+   "name": "그누보드4 새쪽지 알림",
+   "options_page": "options.html",
+   "permissions": [ "http://*/*", "tabs", "notifications" ],
+   "version": "1.0"
+}

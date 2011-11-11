@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>그누보드4 쪽지알림 background</title>
+</head>
+<body onload="init();">
+</body>
+<script type="text/javascript" src="background.js"></script>
+<script>
+function init()
+{
+	initLocalStorage();
+
+	var server = localStorage["server"];
+
+	if (server) {
+		requestNewMemos();
+	}
+}
+
+chrome.extension.onRequest.addListener(
+	function(request, sender, sendResponse) {
+		if (request.options == "saved") {
+			requestNewMemos();
+		}
+	}
+);
+</script>
+<script src="analytics.js"></script>
+</html>

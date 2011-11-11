@@ -1,0 +1,3 @@
+.project
+syntax: regexp
+^g4memo-ext\.pem$
