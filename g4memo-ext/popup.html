@@ -43,19 +43,22 @@
 		<div class="memo underlined">
 			<div id="homeButton" onclick="javascript: gotoHome()">홈페이지</div>
 			<div style="float:left;width:70px;height:10px;"></div>
-			<div style="float:left;font-weight:bold;">그누보드4 쪽지알림</div>
+			<div style="float:left;font-weight:bold;"><span id="sitename_hd">그누보드4</span>&nbsp;쪽지알림</div>
 			<div id="refreshButton" onclick="javascript: refresh()">다시읽기</div>
 		</div>
 		<div id="container"></div>
 	</div>
 	<script>
 var server  = localStorage["server"];
+var sitename = localStorage["sitename"];
 if (!server || server == "") {
 	chrome.tabs.create({url: "options.html"});
 	window.close();
 }
 else {
-	handleNewMemos();				
+	handleNewMemos();
+	document.title = sitename + " 쪽지알림";
+	document.getElementById("sitename_hd").innerHTML = sitename;
 }
 
 function gotoHome() {

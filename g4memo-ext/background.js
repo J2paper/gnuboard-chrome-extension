@@ -13,6 +13,9 @@
  *		content
  *		URL
  *		datetime
+ *
+ * v1.1 @2011.11.12
+ *  - 사이트 이름 옵션으로, localstorage['sitename']
  */
 var audioElement = new Audio();
 
@@ -88,6 +91,7 @@ function initLocalStorage()
 		chrome.browserAction.setBadgeBackgroundColor({color:[255,0,0,255]});
 		chrome.browserAction.setBadgeText({text: "?"});
 	}
+	localStorage["sitename"] = "그누보드4";	
 
 	localStorage["errorMemos"] = "";
 	localStorage["totalMemos"] = "";

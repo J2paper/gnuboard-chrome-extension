@@ -62,10 +62,12 @@ var old_server;
 function save_options() {
 
 	var server_Input = document.getElementById("server");
+	var sitename_Input = document.getElementById("sitename");
 	var soundCheckBox = document.getElementById("sound");
 	var notifyCheckBox = document.getElementById("notify");
 	
 	localStorage["server"] = server_Input.value;
+	localStorage["sitename"] = sitename_Input.value;
 	if(soundCheckBox.checked) localStorage["soundOn"] = "true";
 	else localStorage["soundOn"] = "false";
 	if(notifyCheckBox.checked) localStorage["notifyOn"] = "true";
@@ -90,6 +92,7 @@ function save_options() {
 function restore_options() {
 
 	var server = localStorage["server"];
+	var sitename = localStorage["sitename"];
 	var sound  = localStorage["soundOn"];
 	var notify = localStorage["notifyOn"];
 	
@@ -100,6 +103,10 @@ function restore_options() {
 	}
 	
 	document.getElementById("server").value  = server;
+	if(!sitename) sitename = "그누보드4";
+	document.getElementById("sitename").value = sitename;
+	document.getElementById("sitename_hd").innerHTML = sitename;
+	document.title = sitename + " 쪽지알림 - Options";
 	if(sound=="true") document.getElementById("sound").checked = true;
 	if(notify=="true") document.getElementById("notify").checked = true;
 }
@@ -108,12 +115,13 @@ function restore_options() {
 
 <body onload="restore_options()">
 	<div id="header">
-		<h1>그누보드4 쪽지알림</h1>
+		<h1><span id="sitename_hd">그누보드4</span>&nbsp;쪽지알림</h1>
 	</div>
 
 	<div class="section-header first">서버정보 및 옵션</div>
 		<form name="option">
 			<div class="line">서버주소:&nbsp; <em>http://</em>&nbsp;<input type="text" id="server"/>&nbsp;<em>/checkNewMemos.php</em></div>
+			<div class="line">사이트이름:&nbsp; <input type="text" id="sitename"/ value="그누보드4"></div>
 			<div class="line">새 쪽지 소리 알림: &nbsp; <input type="checkbox" name="sound" id="sound"/><label for="sound">사용</label></div>
 			<div class="line">새 쪽지 데스크탑 알림: &nbsp; <input type="checkbox" name="notify" id="notify"/><label for="notify">사용</label></div>
 		</form>
