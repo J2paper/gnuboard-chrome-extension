@@ -108,6 +108,7 @@ function gotoHome() {
 
 function refresh() {
 	requestNewMemos();
+	requestNewResponses();
 	document.getElementById("container").innerHTML = '<div class="message">다시 불러오고 있습니다.</div>';
 }
 

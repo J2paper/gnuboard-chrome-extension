@@ -109,24 +109,24 @@ function showNotification(type,nb) {
 	var title, xml, name, content, image;
 
 	if(type=='memo') {
-		if(parseInt(localStorage["totalMemos"])==0) return;
 		title = "쪽지";	
 		xml = localStorage["newMemos"];
 		name = extractXMLelement(xml, "name");
+		if(name.length==0) return;				//TODO: prob. due to intermingled multi-thread from multiple callbacks, 
 		content = extractXMLelement(xml, "content");
 		image = 'palm-email48.png';
 	}else if(type=='response') {
-		if(parseInt(localStorage["totalResponses"])==0) return;
 		title = "반응";
 		xml = localStorage["newResponses"];
 		name = extractXMLelement(xml, "name");
+		if(name.length==0) return;
 		content = extractXMLelement(xml, "title");
 		image = 'palm-message48.png';
 	}else if(type=='watch') {
-		if(parseInt(localStorage["totalWatches"])==0) return;
 		title = "관심";	
 		xml = localStorage["newWatches"];
 		name = extractXMLelement(xml, "name");
+		if(name.length==0) return;
 		content = extractXMLelement(xml, "title");
 		image = 'palm-task48.png';
 	}else return;
@@ -318,6 +318,7 @@ function nK(number)	// 1k = 1001~1999, 2k = 2001 ~ 2999 so on
 
 function extractXMLelement(str,tag)	// extract the content inside the TAG
 {
+	if(str.indexOf("<"+tag+">")==-1) return "";
 	var start = str.indexOf("<"+tag+">") + tag.length + 2;
 	var end   = str.indexOf("</"+tag+">");
 	return str.substring(start,end);
