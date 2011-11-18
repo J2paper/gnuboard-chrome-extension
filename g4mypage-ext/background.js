@@ -106,25 +106,31 @@ function showNotification(type,nb) {
 	if (localStorage["notifyOn"] == null || localStorage["notifyOn"] == "false")
 		return;
 	
-	var title = "반응";
-	var xml = localStorage["newResponses"];
-	var name = extractXMLelement(xml, "name");
-	var content = extractXMLelement(xml, "title");
-	var image = 'palm-message48.png';
+	var title, xml, name, content, image;
 
 	if(type=='memo') {
+		if(localStorage["totalMemos"]==0) return;
 		title = "쪽지";	
 		xml = localStorage["newMemos"];
 		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "content");
 		image = 'palm-email48.png';
+	}else if(type=='response') {
+		if(localStorage["totalResponses"]==0) return;
+		title = "반응";
+		xml = localStorage["newResponses"];
+		name = extractXMLelement(xml, "name");
+		content = extractXMLelement(xml, "title");
+		image = 'palm-message48.png';
 	}else if(type=='watch') {
+		if(localStorage["totalWatches"]==0) return;
 		title = "관심";	
 		xml = localStorage["newWatches"];
 		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "title");
 		image = 'palm-task48.png';
-	}
+	}else return;
+	
 	var postfix = "";
 	if(nb>1) postfix = " (총 " + nb + "개의 새 " + title + ")";  
 
