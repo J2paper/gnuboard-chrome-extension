@@ -1,0 +1,356 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+                    
+	<title>그누보드4 내맞춤쪽</title>
+	<style type="text/css">
+      #homeButton{
+        float:left; color:#E4DEF0; cursor:pointer;
+      	-webkit-border-radius: 2px;
+      	background: #5B3E96;
+      	border: 1px solid black;
+      	padding: 0px 5px;
+      }
+      #homeButton:hover{color:orange; background: white;}
+      .tabButton{
+        float:left; color:#E4DEF0; cursor:pointer;
+      	-webkit-border-radius: 2px;
+      	background: #5B3E96;
+      	border: 1px solid black;
+      	padding: 0px 5px;
+      }
+      .tabButtonSelected{
+        float:left; color:#5B3E96;
+      	-webkit-border-radius: 2px;
+      	background: white;
+      	border: 1px solid #5B3E96;
+      	padding: 0px 5px;
+      }
+      #refreshButton{
+        float:right; color:red; cursor:pointer;
+      	-webkit-border-radius: 2px;
+      	background: white;
+      	border: 1px solid gray;
+      	padding: 0px 5px;
+      }
+      #refreshButton:hover{color:darkred; background:gray;}
+      .nbBadge{
+      	display:none;
+      	vertical-align:10%;
+      	margin:0 3px 2px 0;
+      	padding: 0px 3px;
+        float:none;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+		color: white;
+        text-align: center;
+        border: 1px #555 solid;
+        font: 8px Arial, sans-serif;
+      }
+      #nbNewResponses{background: rgba(0,155,0,0.5);}
+      #nbNewMemos{background: rgba(0,0,255,0.5);}
+      #nbWatches{background: rgba(255,0,0,0.5);}
+
+      #container {width:400px; font-size:9pt; padding:5px;}
+      div.header {margin: 0 5px 5px 5px; padding-top:5px; background-color:#EEE; font-weight: bold; height:20px; font-size:9pt;}
+      .headResponses{border-bottom: solid 2px rgba(0,155,0,0.5);}
+      .headMemos{border-bottom: solid 2px rgba(0,0,255,0.5);}
+      .headWatches{border-bottom: solid 2px rgba(255,0,0,0.5);}
+
+      div.underlined {border-bottom:1px solid;}
+      div.row {margin: 0 5px; padding-top:5px; height:20px; font-size:9pt; }
+      div.oddRow {background:#EEE;}
+      span {padding:0 5px;float:left; overflow:hidden; white-space: nowrap;}
+      span.head_l {width:90px; color:gray; text-align:center;}
+      span.head_s {width:60px; color:gray; text-align:center;}
+      span.title {width:240px; cursor:hand; cursor:pointer; color:blue;}
+      span.title_s {width:170px; cursor:hand; cursor:pointer; color:blue;}
+      span.clear {clear:both;}
+      .message {margin: 10px; text-align:center;}
+      .show {display:inline;}
+      .hide {display:none;}
+    </style>
+    <script type="text/javascript" src="background.js"></script>
+</head>
+<body>
+	<div id="body">
+		<div class="row underlined">
+			<div id="homeButton" onclick="javascript: gotoHome()">홈</div>
+			<div style="float:left;width:10px;height:10px;"></div>
+			<div style="float:left;font-weight:bold;width:180px;overflow:hidden;white-space: nowrap;"><span id="sitename_hd">그누보드4</span>&nbsp;내맞춤쪽</div>
+			<div style="float:left;width:20px;height:10px;"></div>
+			<div id="newMemoButton" class="tabButtonSelected" onclick="javascript: showNewMemos()">쪽지 <span class="nbBadge" id="nbNewMemos"></span></div>
+			<div style="float:left;width:15px;height:10px"></div>
+			<div id="newResponseButton" class="tabButton" onclick="javascript: showNewResponses()" title="내 글/댓글에 달린 답/댓글">반응 <span class="nbBadge" id="nbNewResponses"></span></div>
+			<div id="refreshButton" onclick="javascript: refresh()" title="다시읽기">↺</div>
+		</div>
+		<div id="container"></div>
+	</div>
+	<script>
+var server  = localStorage["server"];
+var sitename = localStorage["sitename"];
+if (!server || server == "") {
+	chrome.tabs.create({url: "options.html"});
+	window.close();
+}
+else {
+	handleNewMemos();
+	updateHeadNumbers();
+	document.title = sitename + " 내맞춤쪽";
+	document.getElementById("sitename_hd").innerHTML = sitename;
+}
+
+function gotoHome() {
+	chrome.tabs.create({url: "http://"+localStorage["server"]});	//TODO: need to tail off or nothing
+}
+
+function refresh() {
+	requestNewMemos();
+	document.getElementById("container").innerHTML = '<div class="message">다시 불러오고 있습니다.</div>';
+}
+
+function showNewMemos()
+{
+	if(document.getElementById("newMemoButton").className != "tabButtonSelected")
+	{
+		document.getElementById("newMemoButton").className = "tabButtonSelected";
+		document.getElementById("newResponseButton").className = "tabButton";
+		handleNewMemos();
+		trackButton("newMemo");	// GA
+	}
+}
+
+function showNewResponses()
+{
+	if(document.getElementById("newResponseButton").className != "tabButtonSelected")
+	{
+		document.getElementById("newResponseButton").className = "tabButtonSelected";
+		document.getElementById("newMemoButton").className = "tabButton";
+		handleNewResponses();
+		trackButton("newResponse");	// GA
+	}
+}
+
+function updateHeadNumbers()
+{
+	var nbNewMemos = parseInt(localStorage["totalMemos"]);
+	if(nbNewMemos) {
+		document.getElementById("nbNewMemos").className = 'nbBadge show';
+		document.getElementById("nbNewMemos").innerHTML = nbNewMemos;
+	}
+	var nbNewResponses = parseInt(localStorage["totalResponses"]);
+	if(nbNewResponses) {
+		document.getElementById("nbNewResponses").className = 'nbBadge show';
+		document.getElementById("nbNewResponses").innerHTML = nbNewResponses;
+	}
+}
+
+function handleNewMemos() {
+
+/*
+	Structure:
+		newMemos
+			total
+			nextUpate
+			memo
+				name
+				content
+				URL
+				datetime
+*/
+	showNewMemos();
+	updateHeadNumbers();
+	
+	document.getElementById("container").innerHTML = '';
+	var error=localStorage["errorMemos"];
+	if(error) {
+		document.getElementById("container").innerHTML = '<div  class="message">에러가 발생했습니다. 코드: '+error+'</div>';
+		return;
+	}
+
+	var parser=new DOMParser();
+
+	var xmlDoc=parser.parseFromString(localStorage["newMemos"],"text/xml");
+	var memos = xmlDoc.getElementsByTagName("memo");
+
+	var length = memos.length;
+	if(length==0) {
+		document.getElementById("container").innerHTML = '<div class="message">새 쪽지가 없습니다. :)</div>';
+		return;
+	}
+
+	var newdiv=document.createElement("div");
+	newdiv.className = "header headMemos";
+	newdiv.innerHTML = "<span class='head_s'>보낸 사람</span><span style='width:240px; color:gray; text-align:center;'>쪽지 내용</span><span class='head_s'>시간</span>";
+	document.getElementById("container").appendChild(newdiv)
+
+	for (var i=0;i<length;i++) {
+		var memo = memos[i];
+
+		var name, title, URL, dtime;
+		try {
+			name  = memo.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+			title = memo.getElementsByTagName("content")[0].childNodes[0].nodeValue;
+			URL   = memo.getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+			dtime = memo.getElementsByTagName("datetime")[0].childNodes[0].nodeValue;
+		} catch(e) {
+//			console.error(e);
+		}
+
+		var newdiv=document.createElement("div");
+		newdiv.id = 'memo_' + i;
+		if(i%2==0) newdiv.className = "row";
+		else newdiv.className = "row oddRow";
+
+		var n_span = newdiv.appendChild(document.createElement('span'));
+		n_span.className = "head_s";
+		n_span.innerHTML = name;
+
+		var t_span = newdiv.appendChild(document.createElement('span'));
+		t_span.className = "title";
+		t_span.innerHTML = title;
+		t_span.title = title;
+		t_span.setAttribute("URL",decodeURIComponent(URL));
+		t_span.onclick = function(){
+			removeMemo(this.getAttribute('URL'));
+			window.open(this.getAttribute('URL'),'winMemo','left=50,top=50,width=620,height=460,scrollbars=1');
+		};
+
+		var d_span = newdiv.appendChild(document.createElement('span'));
+		d_span.className = "head_s";
+		d_span.innerHTML = dtime.substr(3,12);
+
+		var clear = newdiv.appendChild(document.createElement('span'));
+		clear.className = "clear";
+
+		document.getElementById("container").appendChild(newdiv)
+	}
+}
+	
+function removeMemo(url)
+{
+	localStorage["totalMemos"] = Math.max(0, parseInt(localStorage["totalMemos"])-1);
+	var parser=new DOMParser();
+	var xmlDoc=parser.parseFromString(localStorage["newMemos"],"text/xml");
+	xmlDoc.getElementsByTagName("total")[0].childNodes[0].nodeValue = localStorage["totalMemos"];
+	var search = xmlDoc.getElementsByTagName("URL");
+	for(var i=0; i<search.length; i++) {
+		if(search[i].childNodes[0].nodeValue==encodeURIComponent(url)) {
+			xmlDoc.documentElement.removeChild(search[i].parentNode);
+			localStorage["newMemos"] = (new XMLSerializer()).serializeToString(xmlDoc);
+			return;
+		}
+	}
+}
+
+function handleNewResponses() {
+
+/*
+	Structure:
+		newResponses
+			total
+			nextUpate
+			lastUpated
+			response
+				group
+				board
+				title
+				URL
+				name
+				datetime
+*/
+	document.getElementById("container").innerHTML = '';
+	var error=localStorage["errorResponses"];
+	if(error) {
+		document.getElementById("container").innerHTML = '<div  class="message">에러가 발생했습니다. 코드: '+error+'</div>';
+		return;
+	}
+
+	var parser=new DOMParser();
+
+	var xmlDoc=parser.parseFromString(localStorage["newResponses"],"text/xml");
+	var responses = xmlDoc.getElementsByTagName("response");
+
+	var length = responses.length;
+	if(length==0) {
+		document.getElementById("container").innerHTML = '<div class="message">새 반응이 없습니다. :)</div>';
+		return;
+	}
+
+	var newdiv=document.createElement("div");
+	newdiv.className = "header headResponses";
+	newdiv.innerHTML = "<span class='head_s'>게시판</span><span style='width:170px; color:gray; text-align:center;'>제목 / 내용</span><span class='head_s'>작성자</span><span class='head_s'>시간</span>";
+	document.getElementById("container").appendChild(newdiv)
+
+	for (var i=0;i<length;i++) {
+		var response = responses[i];
+
+		var group, board, name, title, URL, dtime;
+		try {
+			group = response.getElementsByTagName("group")[0].childNodes[0].nodeValue;
+			board = response.getElementsByTagName("board")[0].childNodes[0].nodeValue;
+			title = response.getElementsByTagName("title")[0].childNodes[0].nodeValue;
+			URL   = response.getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+			name  = response.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+			dtime = response.getElementsByTagName("datetime")[0].childNodes[0].nodeValue;
+		} catch(e) {
+//				console.error(e);
+		}
+
+		var newdiv=document.createElement("div");
+		newdiv.id = 'response_' + i;
+		if(i%2==0) newdiv.className = "row";
+		else newdiv.className = "row oddRow";
+
+		var b_span = newdiv.appendChild(document.createElement('span'));
+		b_span.className = "head_s";
+		b_span.innerHTML = board;
+
+		var t_span = newdiv.appendChild(document.createElement('span'));
+		t_span.className = "title_s";
+		t_span.innerHTML = title;
+		t_span.title = title;
+		t_span.setAttribute("URL",decodeURIComponent(URL));
+		t_span.onclick = function(){
+			removeResponse(this.getAttribute('URL'));
+			if(localStorage["openedTabId"]) chrome.tabs.update(parseInt(localStorage["openedTabId"]),{url: this.getAttribute('URL')});
+			else chrome.tabs.create({url: this.getAttribute('URL')},function(tab){localStorage["openedTabId"]=tab.id+''});
+		};
+
+		var n_span = newdiv.appendChild(document.createElement('span'));
+		n_span.className = "head_s";
+		n_span.innerHTML = name;
+
+		var d_span = newdiv.appendChild(document.createElement('span'));
+		d_span.className = "head_s";
+		d_span.innerHTML = dtime;
+
+		var clear = newdiv.appendChild(document.createElement('span'));
+		clear.className = "clear";
+
+		document.getElementById("container").appendChild(newdiv)
+	}
+}
+	
+function removeResponse(url)
+{
+	localStorage["totalResponses"] = Math.max(0, parseInt(localStorage["totalResponses"])-1);
+	var parser=new DOMParser();
+	var xmlDoc=parser.parseFromString(localStorage["newResponses"],"text/xml");
+	xmlDoc.getElementsByTagName("total")[0].childNodes[0].nodeValue = localStorage["totalMemos"];
+	var search = xmlDoc.getElementsByTagName("URL");
+	for(var i=0; i<search.length; i++) {
+		if(search[i].childNodes[0].nodeValue==encodeURIComponent(url)) {
+			xmlDoc.documentElement.removeChild(search[i].parentNode);
+			localStorage["newResponses"] = (new XMLSerializer()).serializeToString(xmlDoc);
+			return;
+		}
+	}
+}
+	</script>
+
+	<script src="analytics.js"></script>
+</body>
+</html>

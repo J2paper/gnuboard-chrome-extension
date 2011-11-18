@@ -1,3 +1,5 @@
 .project
 syntax: regexp
 ^g4memo-ext\.pem$
+syntax: regexp
+^g4mypage-ext\.pem$
