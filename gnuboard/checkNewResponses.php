@@ -64,9 +64,10 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
 	}else { // comment
 		// check if comment to mb_id's post or comment
 		$sql2 = " SELECT r.* FROM {$write_table} p, {$write_table} r ".
-				"	WHERE r.wr_id = '{$row[wr_id]}' AND p.mb_id = '{$mb_id} ' ".
+				"	WHERE r.wr_id = '{$row[wr_id]}' AND p.mb_id = '{$mb_id}' ".
 				"		AND (	p.wr_id = '{$row[wr_parent]}' ".					// either p is post and r is p's comment
-				"			OR	p.wr_comment = r.wr_comment AND LOCATE(p.wr_comment_reply, r.wr_comment_reply) = 1) ";
+				"			OR	p.wr_parent = r.wr_parent AND p.wr_comment = r.wr_comment ".
+				"				AND LOCATE(p.wr_comment_reply, r.wr_comment_reply) = 1) ";
 																					// or p and r are in the same comment branch and r is lower comment to p
 		$res2 = sql_query($sql2);
 		if(mysql_num_rows($res2)==0) {

@@ -165,6 +165,8 @@ function initLocalStorage()
 	localStorage["totalResponses"] = "";
 	localStorage["unreadResponses"] = "";
 	localStorage["newResponses"]   = "";
+	localStorage["lastResponsesUpdated"] = "";
+
 
 	localStorage["errorWatches"] = "";
 	localStorage["totalWatches"] = "0";
@@ -238,10 +240,16 @@ function handleNewMemos() {	// placeholder for real function in popup.html
 function requestNewResponses()
 {
 	var server = localStorage["server"];
-
+	var lastUpated = localStorage["lastResponsesUpated"];
+	
 	var xhr = new XMLHttpRequest();
 
-	xhr.open("GET", "http://" + server + "/checkNewResponses.php", true);
+	if(!lastUpated) {
+		xhr.open("GET", "http://" + server + "/checkNewResponses.php", true);
+	}
+	else {
+		xhr.open("GET", "http://" + server + "/checkNewResponses.php?lastUpdated=" + lastUpated, true);
+	}
 
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState==4) {
@@ -278,7 +286,7 @@ function parseNewResponses(xml)
 	{
 		localStorage["errorResponses"] = "";
 		localStorage["totalResponses"] = extractXMLelement(xml, "total");
-		localStorage["lastResponsesChecked"] = extractXMLelement(xml, "lastChecked");
+		localStorage["lastResponsesUpdated"] = extractXMLelement(xml, "lastUpated");
 		localStorage["newResponses"]   = xml;
 		
 		updateTitleBadge();
