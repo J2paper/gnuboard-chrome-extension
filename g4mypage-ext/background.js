@@ -114,12 +114,14 @@ function showNotification(type,nb) {
 
 	if(type=='memo') {
 		title = "쪽지";	
-		xml = localStorage["newMemos"]
+		xml = localStorage["newMemos"];
+		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "content");
 		image = 'palm-email48.png';
 	}else if(type=='watch') {
 		title = "관심";	
-		xml = localStorage["newWatches"]
+		xml = localStorage["newWatches"];
+		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "title");
 		image = 'palm-task48.png';
 	}
