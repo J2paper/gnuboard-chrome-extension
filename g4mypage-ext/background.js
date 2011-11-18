@@ -111,23 +111,36 @@ function showNotification(type,nb) {
 	if(type=='memo') {
 		title = "쪽지";	
 		xml = localStorage["newMemos"];
-		name = extractXMLelement(xml, "name");
-		if(name.length==0) return;				//TODO: prob. due to intermingled multi-thread from multiple callbacks, 
-		content = extractXMLelement(xml, "content");
+		try {
+			name = extractXMLelement(xml, "name");
+//			if(name.length==0) return;				//TODO: prob. due to intermingled multi-thread from multiple callbacks, 
+			content = extractXMLelement(xml, "content");
+		}catch (e) {
+			// extractXMLelement couldn't find the tag
+			return;
+		}
 		image = 'palm-email48.png';
 	}else if(type=='response') {
 		title = "반응";
 		xml = localStorage["newResponses"];
-		name = extractXMLelement(xml, "name");
-		if(name.length==0) return;
-		content = extractXMLelement(xml, "title");
+		try {
+			name = extractXMLelement(xml, "name");
+//			if(name.length==0) return;
+			content = extractXMLelement(xml, "title");
+		}catch (e) {
+			return;
+		}
 		image = 'palm-message48.png';
 	}else if(type=='watch') {
 		title = "관심";	
 		xml = localStorage["newWatches"];
-		name = extractXMLelement(xml, "name");
-		if(name.length==0) return;
-		content = extractXMLelement(xml, "title");
+		try {
+			name = extractXMLelement(xml, "name");
+//			if(name.length==0) return;
+			content = extractXMLelement(xml, "title");
+		}catch (e) {
+			return;
+		}
 		image = 'palm-task48.png';
 	}else return;
 	
@@ -318,7 +331,10 @@ function nK(number)	// 1k = 1001~1999, 2k = 2001 ~ 2999 so on
 
 function extractXMLelement(str,tag)	// extract the content inside the TAG
 {
-	if(str.indexOf("<"+tag+">")==-1) return "";
+	if(str.indexOf("<"+tag+">")==-1) {
+		throw "NoFound";
+		return "";
+	}
 	var start = str.indexOf("<"+tag+">") + tag.length + 2;
 	var end   = str.indexOf("</"+tag+">");
 	return str.substring(start,end);
