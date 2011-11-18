@@ -17,7 +17,7 @@
  *	newResponses
  *		total
  *		nextUpate
- *		lastUpated
+ *		lastUpdated
  *		Response
  *			group
  *			board
@@ -248,15 +248,15 @@ function handleNewMemos() {	// placeholder for real function in popup.html
 function requestNewResponses()
 {
 	var server = localStorage["server"];
-	var lastUpated = localStorage["lastResponsesUpated"];
+	var lastUpdated = localStorage["lastResponsesUpdated"];
 	
 	var xhr = new XMLHttpRequest();
 
-	if(!lastUpated) {
+	if(!lastUpdated) {
 		xhr.open("GET", "http://" + server + "/checkNewResponses.php", true);
 	}
 	else {
-		xhr.open("GET", "http://" + server + "/checkNewResponses.php?lastUpdated=" + lastUpated, true);
+		xhr.open("GET", "http://" + server + "/checkNewResponses.php?lastUpdated=" + lastUpdated, true);
 	}
 
 	xhr.onreadystatechange = function() {
@@ -294,7 +294,7 @@ function parseNewResponses(xml)
 	{
 		localStorage["errorResponses"] = "";
 		localStorage["totalResponses"] = extractXMLelement(xml, "total");
-		localStorage["lastResponsesUpdated"] = extractXMLelement(xml, "lastUpated");
+		localStorage["lastResponsesUpdated"] = extractXMLelement(xml, "lastUpdated");
 		localStorage["newResponses"]   = xml;
 		
 		updateTitleBadge();

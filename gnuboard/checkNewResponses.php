@@ -18,7 +18,7 @@ $mb_id = $member[mb_id];
  *	newResponses
  *		total
  *		nextUpate
- *		lastUpated
+ *		lastUpdated
  *		response
  *			group
  *			board
@@ -28,10 +28,10 @@ $mb_id = $member[mb_id];
  *			datetime
  */
 
-// new responses on my posts/comments afert 'lastUpated'
+// new responses on my posts/comments afert 'lastUpdated'
 $list = array();
 echo "<newResponses>";
-// all new other's responses after 'lastUpated' from the 'searchable' tables (bo_use_search=1)
+// all new other's responses after 'lastUpdated' from the 'searchable' tables (bo_use_search=1)
 $sql_common = " FROM {$g4['board_new_table']} a, {$g4['board_table']} b, {$g4['group_table']} c ".
 			"	WHERE NOT a.mb_id = '{$mb_id}' AND a.bo_table = b.bo_table AND b.gr_id = c.gr_id AND b.bo_use_search = '1' ";
 if ($lastUpdated) $sql_common .= " AND bn_datetime > '{$lastUpdated}' ";
@@ -98,7 +98,7 @@ for ($i=0; $row=sql_fetch_array($result); $i++) {
 
 echo "<total>".count($list)."</total>";
 echo "<nextUpate>0</nextUpate>";	// TODO: need to update for server side control on update interval
-echo "<lastUpated>".date("Y-m-d+H:i:s")."</lastUpated>";
+echo "<lastUpdated>".date("Y-m-d+H:i:s")."</lastUpdated>";
 for ($i=0; $i < count($list); $i++) {
 	$e = $list[$i];
 	echo "<response>{$i}";
