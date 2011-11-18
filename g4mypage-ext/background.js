@@ -37,9 +37,9 @@ function updateTitleBadge()
 	var totalResponses = localStorage["totalResponses"];
 	var unreadResponses = localStorage["unreadResponses"];
 	var totalMemos = localStorage["totalMemos"];
-	var unreadMemos = localStorage["unreadMemos"];
-	var totalWatches = localStorage["totalWatches"];
-	var unreadWatches = localStorage["unreadWatches"];
+	var unreadMemos =  localStorage["unreadMemos"];
+	var totalWatches =  localStorage["totalWatches"];
+	var unreadWatches =  localStorage["unreadWatches"];
 
 	//update title
 	var title = "";
@@ -109,21 +109,21 @@ function showNotification(type,nb) {
 	var title, xml, name, content, image;
 
 	if(type=='memo') {
-		if(localStorage["totalMemos"]==0) return;
+		if(parseInt(localStorage["totalMemos"])==0) return;
 		title = "쪽지";	
 		xml = localStorage["newMemos"];
 		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "content");
 		image = 'palm-email48.png';
 	}else if(type=='response') {
-		if(localStorage["totalResponses"]==0) return;
+		if(parseInt(localStorage["totalResponses"])==0) return;
 		title = "반응";
 		xml = localStorage["newResponses"];
 		name = extractXMLelement(xml, "name");
 		content = extractXMLelement(xml, "title");
 		image = 'palm-message48.png';
 	}else if(type=='watch') {
-		if(localStorage["totalWatches"]==0) return;
+		if(parseInt(localStorage["totalWatches"])==0) return;
 		title = "관심";	
 		xml = localStorage["newWatches"];
 		name = extractXMLelement(xml, "name");
