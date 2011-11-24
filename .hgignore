@@ -3,3 +3,13 @@ syntax: regexp
 ^g4memo-ext\.pem$
 syntax: regexp
 ^g4mypage-ext\.pem$
+syntax: regexp
+^yepan-ext$
+syntax: regexp
+^yepan-ext\.crx$
+syntax: regexp
+^yepan-ext\.pem$
+syntax: regexp
+^yepan\.chrome\.php$
+syntax: regexp
+^yepannet-chrome-extension\.zip$

@@ -113,10 +113,8 @@ function showNotification(type,nb) {
 		xml = localStorage["newMemos"];
 		try {
 			name = extractXMLelement(xml, "name");
-//			if(name.length==0) return;				//TODO: prob. due to intermingled multi-thread from multiple callbacks, 
 			content = extractXMLelement(xml, "content");
 		}catch (e) {
-			// extractXMLelement couldn't find the tag
 			return;
 		}
 		image = 'palm-email48.png';
@@ -125,7 +123,6 @@ function showNotification(type,nb) {
 		xml = localStorage["newResponses"];
 		try {
 			name = extractXMLelement(xml, "name");
-//			if(name.length==0) return;
 			content = extractXMLelement(xml, "title");
 		}catch (e) {
 			return;
@@ -136,7 +133,6 @@ function showNotification(type,nb) {
 		xml = localStorage["newWatches"];
 		try {
 			name = extractXMLelement(xml, "name");
-//			if(name.length==0) return;
 			content = extractXMLelement(xml, "title");
 		}catch (e) {
 			return;
@@ -331,8 +327,8 @@ function nK(number)	// 1k = 1001~1999, 2k = 2001 ~ 2999 so on
 
 function extractXMLelement(str,tag)	// extract the content inside the TAG
 {
-	if(str.indexOf("<"+tag+">")==-1) {
-		throw "NoFound";
+	if(str.indexOf("<"+tag+">")==-1) {	//TODO: prob. due to intermingled multi-thread from multiple callbacks
+		throw "NoFound_"+tag;
 		return "";
 	}
 	var start = str.indexOf("<"+tag+">") + tag.length + 2;

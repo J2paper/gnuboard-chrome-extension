@@ -5,7 +5,6 @@
  */
 $g4_path = ".";
 include_once("$g4_path/_common.php");
-include_once("$g4[path]/lib/connect.lib.php");
 header ("Content-Type:text/xml");
 if(!$member[mb_id]) {	// not logged in
 	echo "<error>NOT_LOGIN</error>";

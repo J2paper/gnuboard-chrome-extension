@@ -318,6 +318,7 @@ function handleNewResponses() {
 			removeResponse(this.getAttribute('URL'));
 			if(localStorage["openedTabId"]) chrome.tabs.update(parseInt(localStorage["openedTabId"]),{url: this.getAttribute('URL')});
 			else chrome.tabs.create({url: this.getAttribute('URL')},function(tab){localStorage["openedTabId"]=tab.id+''});
+			window.close();
 		};
 
 		var n_span = newdiv.appendChild(document.createElement('span'));
